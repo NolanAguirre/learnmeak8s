@@ -1,0 +1,6 @@
+# General rules
+- Environment variables should all be assigned to const variables after the imports for a file 
+- Assign Environment varaibles to const variables that are all caps, for example const FOO = process.env.FOO
+
+# Javascript rules
+- use arrow functions with const variables instead of the function keywork

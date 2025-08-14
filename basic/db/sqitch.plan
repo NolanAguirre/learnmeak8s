@@ -1,0 +1,6 @@
+%syntax-version=1.0.0
+%project=foo
+
+0.0.0 2025-08-14T02:18:46Z Nolan Aguirre <nolan@nolan> # add build schema
+1.000.0 2025-08-14T02:09:04Z Nolan Aguirre <nolan@nolan> # intial db
+0.1.0 2025-08-14T03:28:10Z Nolan Aguirre <nolan@nolan> # postgraphile util migration

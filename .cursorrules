@@ -4,3 +4,12 @@
 
 # Javascript rules
 - use arrow functions with const variables instead of the function keywork
+
+
+# Postgres rules
+- All tables with more than one column need a UUID id
+- All SQL is uppercase
+- All user provided names are lowercase, underscore separated 
+- Use postgres 14
+- Do not use ON CASCADE DELETE unless asked specifically to
+- Always fully qualify schema and name

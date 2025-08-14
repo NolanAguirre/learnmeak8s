@@ -22,3 +22,22 @@ revert.%:
 reset:
 	$(SQITCH) revert --to @ROOT --target localhost
 
+# Database management commands
+.PHONY: db-up db-down db-reset db-logs db-shell
+
+# Start PostgreSQL container
+docker-up:
+	docker compose up -d
+
+# Stop PostgreSQL container
+db-down:
+	docker compose down
+
+# View PostgreSQL logs
+db-logs:
+	docker compose logs -f postgres
+
+# Connect to PostgreSQL shell
+db-shell:
+	docker compose exec postgres psql -U postgres -d learnmeak8s
+

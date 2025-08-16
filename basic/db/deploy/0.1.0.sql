@@ -1,8 +1,21 @@
 -- Deploy foo:0.1.0 to pg
---all code in this file is required for postgraile to run
---these changes are required because of the tightened security from 0.0.0
+
+
+--things in this file are generally usful utilities that can be used during everyday interactions with the database
+--they are not schema changing functions like 0.0.0, they opearte on the data of the database, not the schema
 BEGIN;
 
-GRANT EXECUTE ON FUNCTION current_setting(TEXT) TO PUBLIC;
+-- Create a generic trigger function to update created_at if the new and old records are distinct
+CREATE OR REPLACE FUNCTION util.update_created_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW IS DISTINCT FROM OLD THEN
+        NEW.created_at = NOW();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
 
 COMMIT;

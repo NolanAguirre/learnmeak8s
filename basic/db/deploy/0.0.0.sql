@@ -4,7 +4,7 @@
 -- this schema is meant to be portable, it is meant to help uphold best practices without breaking things
 -- no extensions are used, some code is factored oddly to not break existing systems if this isnt the first migration run.
 -- these functions should only be run by developers, never any user of the application
--- they are truely db superuser level functions that change the database itself, not data within it.
+-- These functions change the database schema itself, not the data within it.
 BEGIN;
 
 
@@ -222,5 +222,66 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- this is so much less common than row level triggers that create_trigger defaults to row. 
+-- Its better to use two functions than building the single function to support both cases in this instance.
+-- Example usage for set-level trigger:
+-- SELECT util.create_set_trigger(
+--     '', -- leave empty to auto-generate, not recommended
+--     'foo.users',
+--     'foo.my_set_trigger_function',
+--     'BEFORE',
+--     'INSERT OR UPDATE'
+-- );
+CREATE OR REPLACE FUNCTION util.create_set_trigger(
+    trigger_name TEXT,
+    table_name TEXT,
+    function_name TEXT,
+    timing TEXT,
+    events TEXT,
+    function_args TEXT DEFAULT ''
+)
+RETURNS VOID AS
+$$
+DECLARE
+    trigger_exists BOOLEAN;
+    qualified_table TEXT;
+    qualified_function TEXT;
+    create_trigger_sql TEXT;
+BEGIN
+    -- If trigger_name is empty or null, generate one
+    IF trigger_name IS NULL OR trim(trigger_name) = '' THEN
+        trigger_name := util.generate_trigger_name(table_name, function_name, timing, events);
+    ELSE
+        trigger_name := trigger_name;
+    END IF;
+
+    SELECT EXISTS (
+        SELECT 1
+        FROM pg_trigger t
+        JOIN pg_class c ON t.tgrelid = c.oid
+        JOIN pg_namespace n ON c.relnamespace = n.oid
+        WHERE t.tgname = trigger_name
+          AND (n.nspname || '.' || c.relname) = table_name
+    ) INTO trigger_exists;
+
+    IF NOT trigger_exists THEN
+        qualified_table := table_name;
+        qualified_function := function_name;
+
+        create_trigger_sql := 
+            'CREATE TRIGGER ' || quote_ident(trigger_name) ||
+            ' ' || timing || ' ' || events ||
+            ' ON ' || qualified_table ||
+            ' REFERENCING OLD TABLE AS old_rows NEW TABLE AS new_rows' ||
+            ' FOR EACH STATEMENT EXECUTE FUNCTION ' || qualified_function;
+
+        IF function_args IS NOT NULL AND function_args <> '' THEN
+            create_trigger_sql := create_trigger_sql || '(' || function_args || ')';
+        END IF;
+
+        EXECUTE create_trigger_sql;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
 
 COMMIT;

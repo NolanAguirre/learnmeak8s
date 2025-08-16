@@ -1,6 +1,7 @@
 %syntax-version=1.0.0
 %project=foo
 
-0.0.0 2025-08-14T02:18:46Z Nolan Aguirre <nolan@nolan> # add build schema
+0.0.0 2025-08-14T02:18:46Z Nolan Aguirre <nolan@nolan> # add uitl schema
+0.1.0 2025-08-14T03:28:10Z Nolan Aguirre <nolan@nolan> # add util schema functions that can execute outside of deployment
+0.2.0.sql 2025-08-16T03:23:53Z Nolan Aguirre <nolan@nolan> # add postgraphile support
 1.000.0 2025-08-14T02:09:04Z Nolan Aguirre <nolan@nolan> # intial db
-0.1.0 2025-08-14T03:28:10Z Nolan Aguirre <nolan@nolan> # postgraphile util migration

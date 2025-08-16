@@ -8,8 +8,11 @@
 
 # Postgres rules
 - All tables with more than one column need a UUID id
+- Do not use enums, use single column tables instead. An example would be account_status, it should be a table the is foriegn key referenced.
 - All SQL is uppercase
 - All user provided names are lowercase, underscore separated 
 - Use postgres 14
 - Do not use ON CASCADE DELETE unless asked specifically to
 - Always fully qualify schema and name
+- Order columns as follows: primary key, foriegn keys, table columns and finally created_at, updated_at, deleted, test
+- Use citext instead of text unless asked specifically to 
